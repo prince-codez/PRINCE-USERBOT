@@ -20,18 +20,17 @@ SUDO_USER = SUDO_USERS
 if OWNER_ID not in SUDO_USERS:
     SUDO_USERS.append(OWNER_ID)
 
-# Properly initialize aiohttp session with event loop
-loop = asyncio.get_event_loop()
-aiosession = ClientSession(loop=loop)
+# Initialize aiohttp session properly
+aiosession = None
 
 # Set Default API_ID & API_HASH if missing
 if not API_ID:
     print("WARNING: API ID NOT FOUND, USING DEFAULT ⚡")
-    API_ID = "24941168"
+    API_ID = "6435225"
 
 if not API_HASH:
     print("WARNING: API HASH NOT FOUND, USING DEFAULT ⚡")   
-    API_HASH = "2ad0e09b0b43bb53436562030aa6a952"
+    API_HASH = "4e984ea35f854762dcde906dce426c2d"
 
 # Check for BOT_TOKEN
 if not BOT_TOKEN:
@@ -78,12 +77,14 @@ for idx, session in enumerate(session_list, start=1):
 
 # Start all clients
 async def start_clients():
+    global aiosession
+    aiosession = ClientSession()  # Initialize session in async function
     print("Starting all clients... 🚀")
     await app.start()
     for client in clients:
         await client.start()
     print("All clients started successfully! ✅")
 
-# Run Clients
+# Run Clients Safely
 if __name__ == "__main__":
-    loop.run_until_complete(start_clients())
+    asyncio.run(start_clients())  # Fixes 'no running event loop' error
